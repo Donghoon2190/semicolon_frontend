@@ -1,7 +1,7 @@
 import ApolloClient from "apollo-boost";
 import { defaults, resolvers } from "./LocalState";
 export default new ApolloClient({
-    uri: process.env.NODE_ENV === "development" ? "http://localhost:4040" : "https://teamsemicolon-backend.herokuapp.com"
+    uri: process.env.NODE_ENV === "development" ? "http://localhost:5000" : "https://teamsemicolon-backend.herokuapp.com"
     ,
     clientState: {
         defaults,

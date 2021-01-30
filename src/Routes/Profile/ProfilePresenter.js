@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Helmet } from "rl-react-helmet";
 import Loader from "../../Components/Loader";
@@ -8,7 +8,8 @@ import FollowButton from "../../Components/FollowButton";
 import SquarePost from "../../Components/SquarePost";
 import Button from "../../Components/Button";
 import { LOG_OUT } from "./ProfileContainer";
-
+import EditProfile from "./EditProfile";
+import { Setting } from "../../Components/Icons";
 const Wrapper = styled.div`
   min-height: 100vh;
 `;
@@ -23,6 +24,12 @@ const Header = styled.header`
 `;
 
 const HeaderColumn = styled.div``;
+
+const NameDiv = styled.div`
+width: 200px;
+    overflow: hidden;
+`;
+const IconDiv = styled.div``;
 
 const UsernameRow = styled.div`
   display: flex;
@@ -53,6 +60,11 @@ const FullName = styled(FatText)`
 const Bio = styled.p`
   margin: 10px 0px;
 `;
+const Button1 = styled.span`
+
+  cursor: pointer;
+`;
+
 
 const Posts = styled.div`
   display: grid;
@@ -60,7 +72,6 @@ const Posts = styled.div`
   grid-template-rows: 200px;
   grid-auto-rows: 200px;
 `;
-
 
 export default ({ loading, data, logOut }) => {
   if (loading === true) {
@@ -70,65 +81,91 @@ export default ({ loading, data, logOut }) => {
       </Wrapper>
     );
   } else if (!loading && data && data.seeUser) {
-    const {
-      seeUser: {
-        id,
-        avatar,
-        username,
-        fullName,
-        isFollowing,
-        isSelf,
-        bio,
-        followingCount,
-        followersCount,
-        postsCount,
-        posts,
-      }
+
+    const [editProfile, setEditProfile] = useState(false);
+
+    const editClick = (e) => {
+      setEditProfile(e => !e)
+    }
+
+    const { seeUser: {
+      id,
+      avatar,
+      username,
+      firstName,
+      lastName,
+      fullName,
+      isFollowing,
+      isSelf,
+      bio,
+      followingCount,
+      followersCount,
+      postsCount,
+      posts,
+    }
     } = data;
+    const [userInfo, setUserInfo] = useState({
+      username,
+      avatar,
+      firstName,
+      lastName,
+      bio,
+    });
+    console.log(userInfo)
     return (
-      <Wrapper>
-        <Helmet>
-          <title>{username} | Prismagram</title>
-        </Helmet>
-        <Header>
-          <HeaderColumn>
-            <Avatar size="lg" url={avatar} />
-          </HeaderColumn>
-          <HeaderColumn>
-            <UsernameRow>
-              <Username>{username}</Username>{" "}
+      !editProfile ?
+        (<Wrapper>
+          <Helmet>
+            <title>{username} | Prismagram</title>
+          </Helmet>
+          <Header>
+            <HeaderColumn>
+              <Avatar size="lg" url={avatar} />
+            </HeaderColumn>
+            <HeaderColumn>
+              <UsernameRow>
+                <NameDiv>
+                  <Username>{userInfo.username}</Username>{" "}
+                </NameDiv>
+                <IconDiv>
+                  <Button1 onClick={() => { editClick() }} >
+                    <Setting />
+                  </Button1>
+                </IconDiv>
+              </UsernameRow>
+              <Counts>
+                <Count>
+                  <FatText text={String(postsCount)} /> posts
+              </Count>
+                <Count>
+                  <FatText text={String(followersCount)} /> followers
+              </Count>
+                <Count>
+                  <FatText text={String(followingCount)} /> following
+              </Count>
 
-            </UsernameRow>
-            <Counts>
-              <Count>
-                <FatText text={String(postsCount)} /> posts
-              </Count>
-              <Count>
-                <FatText text={String(followersCount)} /> followers
-              </Count>
-              <Count>
-                <FatText text={String(followingCount)} /> following
-              </Count>
+              </Counts>
+              <FullName text={userInfo.firstName + userInfo.lastName} />
+              <Bio>{userInfo.bio}</Bio>
+              {isSelf ? <Button onClick={logOut} text="Log Out" /> : <FollowButton isFollowing={isFollowing} id={id} />}
+            </HeaderColumn>
+          </Header>
+          <Posts>
+            {posts &&
+              posts.map(post => (
+                <SquarePost
+                  key={post.id}
+                  likeCount={post.likeCount}
+                  commentCount={post.commentCount}
+                  file={post.files[0]}
+                />
+              ))}
+          </Posts>
+        </Wrapper>)
+        : (
+          <EditProfile data={data.seeUser} setUserInfo={setUserInfo} userInfo={userInfo} setEditProfile={setEditProfile} />
+        )
 
-            </Counts>
-            <FullName text={fullName} />
-            <Bio>{bio}</Bio>
-            {isSelf ? <Button onClick={logOut} text="Log Out" /> : <FollowButton isFollowing={isFollowing} id={id} />}
-          </HeaderColumn>
-        </Header>
-        <Posts>
-          {posts &&
-            posts.map(post => (
-              <SquarePost
-                key={post.id}
-                likeCount={post.likeCount}
-                commentCount={post.commentCount}
-                file={post.files[0]}
-              />
-            ))}
-        </Posts>
-      </Wrapper>
     );
   }
-  return null;
-};
+}

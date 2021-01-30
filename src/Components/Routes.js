@@ -7,6 +7,7 @@ import Explore from "../Routes/Explore";
 import Search from "../Routes/Search/index";
 import Profile from "../Routes/Profile/index";
 import PostDetail from "../Routes/PostDetail";
+import EditProfile from "../Routes/Profile/EditProfile";
 
 const LoggedInRoutes = () => (
     <Switch>
