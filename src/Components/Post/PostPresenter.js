@@ -5,6 +5,9 @@ import FatText from "../FatText";
 import { Link } from "react-router-dom";
 import Avatar from "../Avatar";
 import { HeartFull, HeartEmpty, Comment as CommentIcon } from "../Icons";
+import Popup from 'reactjs-popup';
+import DetailPost from "../DetailPost/index";
+import "../../Styles/Post.css";
 
 const Post = styled.div`
   ${props => props.theme.whiteBox};
@@ -111,21 +114,31 @@ const Caption = styled.div`
   margin:10px 0px;
 `;
 
-
+const CommentCount = styled.span`
+  font-weight: 400;
+  opacity: 0.6;
+  display: block;
+  font-size: 12px;
+  margin: 5px 0px;
+  padding-bottom: 4px;
+  cursor: pointer;
+`;
 
 export default ({
   user: { username, avatar },
+  user,
+  id,
   location,
   files,
   isLiked,
   likeCount,
   createdAt,
   newComment,
+  caption,
   currentItem,
   toggleLike,
   onKeyPress,
   comments,
-  caption,
   selfComments
 }) => (
   <Post>
@@ -157,17 +170,20 @@ export default ({
       <Caption>
         <FatText text={username} /> {caption}
       </Caption>
+      {PopupPost(id, user, files, likeCount, caption, avatar, isLiked, comments, createdAt)}
       {comments && (
         <Comments>
-          {comments.map(comment => (
+          {/* {comments.map(comment => (
             <Comment key={comment.id}>
               <FatText text={comment.user.username} />
               {comment.text}
             </Comment>
-          ))}
+          ))} */}
           {selfComments.map(comment => (
             <Comment key={comment.id}>
-              <FatText text={comment.user.username} />
+              <Link to={`/${comment.user.username}`}>
+                <FatText text={comment.user.username} />
+              </Link>
               {comment.text}
             </Comment>
           ))}
@@ -177,4 +193,34 @@ export default ({
       <Textarea placeholder={"Add a comment..."} value={newComment.value} onChange={newComment.onChange} onKeyPress={onKeyPress} />
     </Meta>
   </Post >
+);
+const PopupPost = (id, user, files, likeCount, caption, avatar, isLiked, comments, createdAt) => (
+
+  <Popup trigger={comments.length === 0 ? <CommentCount> </CommentCount> : <CommentCount>댓글 {comments.length}개 더보기</CommentCount>} modal nested>
+    {close => (
+      <div className="modal">
+        <button className="close" onClick={close}>
+          &times;
+        </button>
+
+        <div className="content">
+          {' '}
+          <DetailPost key={id}
+            id={id}
+            user={user}
+            files={files}
+            likeCount={likeCount}
+            caption={caption}
+            avatar={avatar}
+            isLiked={isLiked}
+            comments={comments}
+            createdAt={createdAt}
+          />
+        </div>
+        <div className="actions">
+
+        </div>
+      </div>
+    )}
+  </Popup>
 );

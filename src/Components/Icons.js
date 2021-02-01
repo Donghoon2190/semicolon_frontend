@@ -117,4 +117,16 @@ export const Setting = () => (
 		c0,20.769,16.905,37.674,37.674,37.674c20.787,0,37.691-16.905,37.691-37.674C194.244,136.454,177.34,119.55,156.553,119.55z"/>
 
     </svg>
+
 );
+
+export const Circle = () => (
+    <svg aria-label="옵션 더 보기" className="_8-yf5 " fill="#262626" height="16" viewBox="0 0 48 48" width="16" >
+        <circle clipRule="evenodd" cx="8" cy="24" fillRule="evenodd" r="4.5">
+        </circle>
+        <circle clipRule="evenodd" cx="24" cy="24" fillRule="evenodd" r="4.5">
+        </circle>
+        <circle clipRule="evenodd" cx="40" cy="24" fillRule="evenodd" r="4.5">
+        </circle>
+    </svg>
+)
